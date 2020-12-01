@@ -1,9 +1,4 @@
 import java.awt.*;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -38,19 +33,12 @@ public class ConnectionDialog_1_0_1 extends JDialog {
             @Override
             public void actionPerformed(ActionEvent event) {
 
-                try {
 
-                    Guest guest = new Guest(nameField.getText(), nicknameField.getText(), emailAddressField.getText());
+                Client client = new Client(nameField.getText(), nicknameField.getText(), emailAddressField.getText());
 
-                    new ClientApplication_1_0_4("127.0.0.1", 45369, guest, ConnectionDialog_1_0_1.this.offset);
+                new ClientApplication_1_0_5("127.0.0.1", 45369, client, ConnectionDialog_1_0_1.this.offset);
 
-                    ConnectionDialog_1_0_1.this.dispose();
-
-                } catch (IOException ex) {
-
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(ConnectionDialog_1_0_1.this, ex.getMessage());
-                }
+                ConnectionDialog_1_0_1.this.dispose();
             }
         });
 
@@ -144,7 +132,6 @@ public class ConnectionDialog_1_0_1 extends JDialog {
         gridBag.setConstraints(portLabel, createConstraints(0, 1));
         gridBag.setConstraints(portField, createConstraints(1, 1));
 
-        Logger.getGlobal().info(gridBag.getConstraints(iPLabel).insets.toString());
         serverInformationPanel.add(iPLabel);
         serverInformationPanel.add(iPField);
         serverInformationPanel.add(portLabel);
@@ -184,6 +171,7 @@ public class ConnectionDialog_1_0_1 extends JDialog {
             public void run() {
                 new ConnectionDialog_1_0_1(0);
                 new ConnectionDialog_1_0_1(400);
+                new ConnectionDialog_1_0_1(800);
 
             }
         });
