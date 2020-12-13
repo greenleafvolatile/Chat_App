@@ -147,8 +147,12 @@ public class ClientApplication_1_0_5 extends JFrame {
 
                     isConnected = false;
 
-                    objectOutputStream.close(); // per stackoverflow: you should close the outermost OutputStream yourself, otherwise it will not get flushed and you can lose data.
-                                                // Closing the stream also closes the socket.
+                    objectOutputStream.flush();
+                    objectOutputStream.close(); // per stackoverflow: you should close the outermost OutputStream yourself, otherwise it will not get flushed and you can lose data. Closing the stream also closes the socket.
+
+                    Logger.getGlobal().info("Client side objectOutputStream closed.");
+
+
 
                 } catch (IOException ioEx) {
 
@@ -289,7 +293,6 @@ public class ClientApplication_1_0_5 extends JFrame {
             this.objectInputStream = anObjectInputStream;
         }
 
-        @SuppressWarnings("unchecked") // Should I do this? Am I doing this correctly?
         public void run() {
 
             while (isConnected) {
@@ -309,7 +312,7 @@ public class ClientApplication_1_0_5 extends JFrame {
 
                         } else {
 
-                            ClientApplication_1_0_5.this.styledDocument.insertString(0, incomingMessage.getContent(), redText);
+                            ClientApplication_1_0_5.this.styledDocument.insertString(styledDocument.getLength(), incomingMessage.getContent(), redText);
 
                         }
 
@@ -317,13 +320,15 @@ public class ClientApplication_1_0_5 extends JFrame {
                     } else if (object instanceof Set) {
 
 
+                        @SuppressWarnings("unchecked")
                         final Set<Client> clientSet = (Set<Client>) object; // This line causes IntelliJ to complain about 'unchecked cast'.
+
                         Logger.getGlobal().info("Set size: " + clientSet.size());
 
 
                         ClientApplication_1_0_5.this.listModel.removeAllElements();
 
-                        for (Object anObject : clientSet) {
+                        for (Object anObject : clientSet) { // Seeing that I did an unchecked cast, should I check to see if each element is indeed of type Client?
 
                             if  (!((Client) anObject).getName().equals(ClientApplication_1_0_5.this.client.getName())) {
 
@@ -334,6 +339,8 @@ public class ClientApplication_1_0_5 extends JFrame {
 
                 } catch (IOException ioEx) {
 
+                    Logger.getGlobal().info("Client: " + ClientApplication_1_0_5.this.client.getName());
+                    Logger.getGlobal().info("Exception: " + ioEx.getClass().getName());
                     ioEx.printStackTrace();
 
                 } catch (BadLocationException badEx) {
@@ -343,6 +350,13 @@ public class ClientApplication_1_0_5 extends JFrame {
                 } catch (ClassNotFoundException cNFEx) {
 
                     cNFEx.printStackTrace();
+
+                }  catch (Exception e) {
+
+                    Logger.getGlobal().info("Client: " + ClientApplication_1_0_5.this.client.getName());
+                    Logger.getGlobal().info("Exception: " + e.getClass().getName());
+                    e.printStackTrace();
+
                 }
 
             }
